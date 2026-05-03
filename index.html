@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencak Silat Pool Maker - O2SN Pesanggrahan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none; }
+            .pool-card { break-inside: avoid; border: 1px solid #000; margin-bottom: 20px; }
+            body { background: white; }
+        }
+        .pool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <div class="container mx-auto px-4 py-8 max-w-5xl flex-grow">
+        <!-- Header with Logo -->
+        <header class="text-center mb-10 no-print flex flex-col items-center">
+            <img src="https://github.com/racketboys-pe/renango2snpesanggrahan/blob/main/1pSda9JSc3s6qmWiP4hKqX9m0jZwS9sFL479urh6%20(1).png?raw=true" 
+                 alt="Logo O2SN" 
+                 class="h-32 mb-4 object-contain"
+                 onerror="this.style.display='none'">
+            <h1 class="text-4xl font-extrabold text-indigo-900 mb-2 uppercase">Pencak Silat Pool Maker</h1>
+            <p class="text-gray-600 font-medium">O2SN SD KECAMATAN PESANGGRAHAN</p>
+        </header>
+
+        <!-- Input Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 no-print border border-gray-100">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Left: Settings -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori Gender</label>
+                        <select id="genderSelect" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="Putra">Putra</option>
+                            <option value="Putri">Putri</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Jumlah Pool yang Diinginkan</label>
+                        <input type="number" id="poolCount" min="1" value="1" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <p class="text-xs text-gray-500 mt-1">*Data akan dibagi rata ke jumlah pool ini secara acak.</p>
+                    </div>
+                </div>
+
+                <!-- Right: Data Input -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Input Data Atlet (Nama, Sekolah)</label>
+                    <textarea id="bulkInput" rows="6" 
+                        placeholder="Contoh:&#10;Andi Saputra, SDN 01 Pesanggrahan&#10;Budi Santoso, SDN 03 Bintaro&#10;Satu baris satu atlet..."
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-mono"></textarea>
+                    <p class="text-xs text-gray-500 mt-1">Pisahkan nama dan sekolah dengan koma (,) atau tekan Tab.</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button onclick="generatePools()" class="flex-1 min-w-[200px] bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                    </svg>
+                    Generate Pool
+                </button>
+                <button onclick="window.print()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Cetak
+                </button>
+                <button onclick="resetApp()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-6 rounded-lg transition duration-200">
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="resultsArea" class="space-y-10 pb-12">
+            <!-- Content will be generated here -->
+            <div class="text-center text-gray-400 py-20 no-print border-2 border-dashed border-gray-200 rounded-xl">
+                <p>Belum ada data. Silakan masukkan daftar atlet dan tentukan jumlah pool.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-6 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-500 text-sm uppercase tracking-wide">
+                copyright © 2026 O2SN CABOR PENCAK SILAT SD KECAMATAN PESANGGRAHAN • KKG PJOK KEC. PESANGGRAHAN
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function parseInput(text) {
+            const lines = text.trim().split('\n');
+            return lines.map(line => {
+                let parts = [];
+                if (line.includes('\t')) {
+                    parts = line.split('\t');
+                } else if (line.includes(',')) {
+                    parts = line.split(',');
+                } else {
+                    parts = [line, '-'];
+                }
+                
+                return {
+                    nama: parts[0] ? parts[0].trim() : 'Tanpa Nama',
+                    sekolah: parts[1] ? parts[1].trim() : '-'
+                };
+            }).filter(item => item.nama !== '');
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function generatePools() {
+            const input = document.getElementById('bulkInput').value;
+            const gender = document.getElementById('genderSelect').value;
+            const poolCount = parseInt(document.getElementById('poolCount').value);
+
+            if (!input.trim()) {
+                const modal = document.createElement('div');
+                modal.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 no-print";
+                modal.innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
+                        <h3 class="text-lg font-bold text-red-600 mb-2">Kesalahan</h3>
+                        <p class="text-gray-600 mb-4">Silakan masukkan data atlet terlebih dahulu.</p>
+                        <button onclick="this.parentElement.parentElement.remove()" class="w-full bg-gray-800 text-white py-2 rounded">Tutup</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                return;
+            }
+
+            // Shuffle data before distributing
+            const athletes = shuffle(parseInput(input));
+            const pools = Array.from({ length: poolCount }, () => []);
+            
+            // Distribute
+            athletes.forEach((athlete, index) => {
+                pools[index % poolCount].push(athlete);
+            });
+
+            renderResults(gender, pools);
+        }
+
+        function renderResults(gender, pools) {
+            const resultsArea = document.getElementById('resultsArea');
+            resultsArea.innerHTML = '';
+
+            const header = document.createElement('div');
+            header.className = 'flex items-center justify-between border-b-2 border-indigo-900 pb-2 mb-6';
+            header.innerHTML = `
+                <h2 class="text-2xl font-bold text-indigo-900 uppercase">DAFTAR POOL: KATEGORI ${gender}</h2>
+                <div class="text-right">
+                    <span class="block text-sm font-bold text-gray-800 uppercase">O2SN PESANGGRAHAN 2026</span>
+                    <span class="text-xs text-gray-500">Total Atlet: ${pools.reduce((a, b) => a + b.length, 0)}</span>
+                </div>
+            `;
+            resultsArea.appendChild(header);
+
+            const grid = document.createElement('div');
+            grid.className = 'pool-grid';
+
+            pools.forEach((pool, index) => {
+                const poolCard = document.createElement('div');
+                poolCard.className = 'pool-card bg-white rounded-lg shadow border-t-4 border-indigo-600 overflow-hidden';
+                
+                let rowsHtml = '';
+                pool.forEach((atlet, i) => {
+                    rowsHtml += `
+                        <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b last:border-0">
+                            <td class="px-4 py-2 text-sm font-bold text-gray-700 w-8">${i + 1}</td>
+                            <td class="px-4 py-2">
+                                <div class="text-sm font-bold text-gray-900 uppercase">${atlet.nama}</div>
+                                <div class="text-[10px] text-gray-500 uppercase tracking-tight">${atlet.sekolah}</div>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                if (pool.length === 0) {
+                    rowsHtml = `<tr><td colspan="2" class="px-4 py-8 text-center text-gray-400 italic">Pool Kosong</td></tr>`;
+                }
+
+                poolCard.innerHTML = `
+                    <div class="bg-indigo-600 px-4 py-2 text-white font-bold flex justify-between items-center">
+                        <span>POOL ${index + 1}</span>
+                        <span class="text-[10px] bg-white text-indigo-600 px-2 py-0.5 rounded-full uppercase">${pool.length} ATLET</span>
+                    </div>
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-gray-100 border-b">
+                                <th class="px-4 py-2 text-[10px] font-bold text-gray-600 uppercase">No</th>
+                                <th class="px-4 py-2 text-[10px] font-bold text-gray-600 uppercase">Nama & Sekolah</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                `;
+                grid.appendChild(poolCard);
+            });
+
+            resultsArea.appendChild(grid);
+            resultsArea.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetApp() {
+            const confirmReset = document.createElement('div');
+            confirmReset.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 no-print";
+            confirmReset.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Konfirmasi Reset</h3>
+                    <p class="text-gray-600 mb-4">Hapus semua data input dan hasil pool?</p>
+                    <div class="flex gap-2">
+                        <button id="confirmYes" class="flex-1 bg-red-600 text-white py-2 rounded">Ya, Hapus</button>
+                        <button id="confirmNo" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded">Batal</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmReset);
+            
+            document.getElementById('confirmYes').onclick = () => {
+                document.getElementById('bulkInput').value = '';
+                document.getElementById('resultsArea').innerHTML = `
+                    <div class="text-center text-gray-400 py-20 no-print border-2 border-dashed border-gray-200 rounded-xl">
+                        <p>Belum ada data. Silakan masukkan data dan klik "Generate Pool".</p>
+                    </div>
+                `;
+                confirmReset.remove();
+            };
+            document.getElementById('confirmNo').onclick = () => confirmReset.remove();
+        }
+    </script>
+</body>
+</html>
