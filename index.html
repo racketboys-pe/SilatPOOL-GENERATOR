@@ -7,10 +7,50 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
-            .no-print { display: none; }
-            .pool-card { break-inside: avoid; border: 1px solid #059669; margin-bottom: 20px; }
-            body { background: white; }
+            /* Sembunyikan elemen yang tidak diperlukan saat print */
+            .no-print, 
+            footer, 
+            .input-section { 
+                display: none !important; 
+            }
+            
+            /* Pastikan container mengambil lebar penuh */
+            .container { 
+                max-width: 100% !important; 
+                width: 100% !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+            }
+
+            /* Pengaturan halaman */
+            body { 
+                background: white !important; 
+                padding: 0;
+                margin: 0;
+            }
+
+            /* Agar pool tidak terpotong di tengah halaman */
+            .pool-card { 
+                break-inside: avoid; 
+                border: 1px solid #059669 !important; 
+                margin-bottom: 20px; 
+                box-shadow: none !important;
+            }
+
+            /* Tampilkan header logo saat print */
+            .print-header {
+                display: flex !important;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 2rem;
+            }
         }
+
+        /* Default: sembunyikan header khusus print di layar (agar tidak double) */
+        .print-header {
+            display: none;
+        }
+
         .pool-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -21,18 +61,22 @@
 <body class="bg-slate-50 min-h-screen font-sans flex flex-col text-slate-900">
 
     <div class="container mx-auto px-4 py-8 max-w-5xl flex-grow">
-        <!-- Header with Logo -->
-        <header class="text-center mb-10 no-print flex flex-col items-center">
+        
+        <!-- Header (Tampil di Layar & Saat Print) -->
+        <header class="flex flex-col items-center text-center mb-10">
             <img src="https://github.com/racketboys-pe/renango2snpesanggrahan/blob/main/1pSda9JSc3s6qmWiP4hKqX9m0jZwS9sFL479urh6%20(1).png?raw=true" 
                  alt="Logo O2SN" 
                  class="h-32 mb-4 object-contain"
                  onerror="this.style.display='none'">
-            <h1 class="text-4xl font-black text-green-700 mb-2 uppercase tracking-tighter">Pencak Silat Pool Maker</h1>
-            <p class="text-slate-600 font-semibold tracking-widest uppercase text-sm">O2SN SD KECAMATAN PESANGGRAHAN</p>
+            
+            <div class="no-print">
+                <h1 class="text-4xl font-black text-green-700 mb-2 uppercase tracking-tighter">Pencak Silat Pool Maker</h1>
+                <p class="text-slate-600 font-semibold tracking-widest uppercase text-sm">O2SN SD KECAMATAN PESANGGRAHAN</p>
+            </div>
         </header>
 
-        <!-- Input Section -->
-        <div class="bg-white rounded-xl shadow-md p-6 mb-8 no-print border-t-4 border-green-600">
+        <!-- Input Section (Hanya Layar) -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8 no-print border-t-4 border-green-600 input-section">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 <!-- Left: Settings -->
@@ -90,8 +134,8 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-green-900 text-green-50 py-8 mt-auto border-t-4 border-green-600">
+    <!-- Footer (Hanya Layar) -->
+    <footer class="bg-green-900 text-green-50 py-8 mt-auto border-t-4 border-green-600 no-print">
         <div class="container mx-auto px-4 text-center">
             <p class="text-xs uppercase tracking-[0.25em] font-bold leading-relaxed">
                 copyright © 2026 O2SN CABOR PENCAK SILAT SD KECAMATAN PESANGGRAHAN<br>
@@ -159,7 +203,7 @@
                     <h2 class="text-3xl font-black text-green-800 uppercase italic leading-none">DAFTAR POOL: ${gender}</h2>
                     <p class="text-slate-500 font-bold text-xs mt-1 uppercase tracking-widest">O2SN PESANGGRAHAN 2026</p>
                 </div>
-                <div class="bg-green-100 px-4 py-2 rounded-lg border border-green-200">
+                <div class="bg-green-100 px-4 py-2 rounded-lg border border-green-200 no-print">
                     <span class="text-sm font-black text-green-700 uppercase tracking-tight">Total Peserta: ${pools.reduce((a, b) => a + b.length, 0)} Atlet</span>
                 </div>
             `;
